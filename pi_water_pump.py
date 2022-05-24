@@ -5,6 +5,13 @@ import spidev
 import RPi.GPIO as GPIO
 from MySQLdb import _mysql
 
+
+# db
+db_ip = "" # ip of your mysql/mariadb
+db_username = "" # username
+db_password = "" # password
+db_database = "" # database
+
 # Pin 15 on Raspberry Pi corresponds to GPIO 22
 LED1 = 15
 # Pin 16 on Raspberry Pi corresponds to GPIO 23
@@ -27,12 +34,6 @@ GPIO.setup(LED1, GPIO.OUT)
 GPIO.setup(LED2, GPIO.OUT)
 GPIO.setup(FAN, GPIO.OUT)
 
-# db
-
-db_ip = "" # ip of your mysql/mariadb
-db_username = "" # username
-db_password = "" # password
-db_database = "" # database
 
 db = _mysql.connect(db_ip, db_username, db_password, db_database)
 
