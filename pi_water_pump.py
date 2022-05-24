@@ -12,12 +12,13 @@ db_username = "" # username
 db_password = "" # password
 db_database = "" # database
 
-# Pin 15 on Raspberry Pi corresponds to GPIO 22
+# gpio 22
 LED1 = 15
-# Pin 16 on Raspberry Pi corresponds to GPIO 23
+# gpio 23
 LED2 = 16
 
-FAN = 12
+# gpio 18
+PUMP = 12
 
 spi_ch = 0
 
@@ -32,7 +33,7 @@ GPIO.setwarnings(False)
 # set up GPIO output channel
 GPIO.setup(LED1, GPIO.OUT)
 GPIO.setup(LED2, GPIO.OUT)
-GPIO.setup(FAN, GPIO.OUT)
+GPIO.setup(PUMP, GPIO.OUT)
 
 
 db = _mysql.connect(db_ip, db_username, db_password, db_database)
@@ -41,6 +42,7 @@ db = _mysql.connect(db_ip, db_username, db_password, db_database)
 def close(signal, frame):
     GPIO.output(LED1, 0)
     GPIO.output(LED2, 0)
+    GPIO.output(PUMP, 0)
     sys.exit(0)
 
 signal.signal(signal.SIGINT, close)
@@ -88,25 +90,25 @@ if __name__ == '__main__':
         while True:
             adc_0 = get_adc(0)
             adc_1 = get_adc(1)
-#            print(adc_0, adc_1)
+
             high = 3.3
             low = 1.4
             moist1 = ((adc_0 - low) / (high - low)) * 100
             moist2 = ((adc_1 - low) / (high - low ))* 100
-#            print("Moisture 1 : ", moist1)
+
             db.query("delete from STUFF where name = 'pi02_moisture'")
             db.query("insert into STUFF(name, value) values('pi02_moisture', {})".format(moist1))
- #           print("Fan off")
-            GPIO.output(FAN,0)
+
+            GPIO.output(PUMP,0)
             db.query("select value from STUFF where name = 'pump_action'")
             r = db.store_result()
             row = r.fetch_row(1, how=0)
             if 'pump_water' in str(row[0]):
              print("PUMP IS ON!!")
              db.query("update STUFF set value = 'pump_idle' where name = 'pump_action'")
-             GPIO.output(FAN,1)
+             GPIO.output(PUMP,1)
              time.sleep(5)
-             GPIO.output(FAN,0)
+             GPIO.output(PUMP,0)
   #          print("fetch: ",row[0])
 
             time.sleep(5)
