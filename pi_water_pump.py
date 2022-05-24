@@ -91,10 +91,16 @@ if __name__ == '__main__':
             adc_0 = get_adc(0)
             adc_1 = get_adc(1)
 
-            high = 3.3
-            low = 1.4
+            high = 3.5
+            low = 1.6
             moist1 = ((adc_0 - low) / (high - low)) * 100
             moist2 = ((adc_1 - low) / (high - low ))* 100
+            moist1 = moist1 * -1
+            moist1 = moist1 + 100
+            if moist1 < 0:
+             moist1 = 0
+            if moist1 > 100:
+             moist1 = 100
 
             db.query("delete from STUFF where name = 'pi02_moisture'")
             db.query("insert into STUFF(name, value) values('pi02_moisture', {})".format(moist1))
