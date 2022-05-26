@@ -36,7 +36,6 @@ GPIO.setup(LED2, GPIO.OUT)
 GPIO.setup(PUMP, GPIO.OUT)
 
 
-db = _mysql.connect(db_ip, db_username, db_password, db_database)
 
 
 def close(signal, frame):
@@ -87,23 +86,48 @@ def get_adc(channel):
 if __name__ == '__main__':
     # Report the channel 0 and channel 1 voltages to the terminal
     try:
+        high_0 = 3
+        low_0 = 2
+        high_1 = 3
+        low_0 = 2
         while True:
+            db = _mysql.connect(db_ip, db_username, db_password, db_database)
+
             adc_0 = get_adc(0)
             adc_1 = get_adc(1)
+  
+            if adc_0 < low_0:
+             low_0 = adc_0
+            if adc_0 > high_0:
+             high_0 = adc_0
+            if adc_1 < low_1:
+             low_1 = adc_1
+            if adc_1 > high_1:
+             high_1 = adc_1            
 
-            high = 3.5
-            low = 1.6
-            moist1 = ((adc_0 - low) / (high - low)) * 100
-            moist2 = ((adc_1 - low) / (high - low ))* 100
+            print("High_0 " + high_0)
+            print("Low_0 " + low_0)
+            print("High_1 " + high_1)
+            print("low_1 " + low_1)
+            
+            moist1 = ((adc_0 - low_0) / (high_0 - low_0)) * 100
+            moist2 = ((adc_1 - low_1) / (high_1 - low_1))* 100
             moist1 = moist1 * -1
             moist1 = moist1 + 100
             if moist1 < 0:
              moist1 = 0
             if moist1 > 100:
              moist1 = 100
+            moist2 = moist2 * -1
+            moist2 = moist2 + 100
+            if moist2 < 0:
+             moist2 = 0
+            if moist2 > 100:
+             moist2 = 100
 
             db.query("delete from STUFF where name = 'pi02_moisture'")
-            db.query("insert into STUFF(name, value) values('pi02_moisture', {})".format(moist1))
+            db.query("insert into STUFF(name, value) values('pi02_moisture_1', {})".format(moist1))
+            db.query("insert into STUFF(name, value) values('pi02_moisture_2', {})".format(moist2))
 
             GPIO.output(PUMP,0)
             db.query("select value from STUFF where name = 'pump_action'")
@@ -116,7 +140,7 @@ if __name__ == '__main__':
              time.sleep(5)
              GPIO.output(PUMP,0)
   #          print("fetch: ",row[0])
-
+            db.close()
             time.sleep(5)
     finally:
         GPIO.cleanup()
