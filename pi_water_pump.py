@@ -86,10 +86,10 @@ def get_adc(channel):
 if __name__ == '__main__':
     # Report the channel 0 and channel 1 voltages to the terminal
     try:
-        high_0 = 3
-        low_0 = 2
-        high_1 = 3
-        low_1 = 2
+        high_0 = 3.4277
+        low_0 = 1.5625
+        high_1 = 3.3203
+        low_1 = 1.3671
         while True:
             db = _mysql.connect(db_ip, db_username, db_password, db_database)
 
@@ -105,10 +105,7 @@ if __name__ == '__main__':
             if adc_1 > high_1:
              high_1 = adc_1            
 
-            print("High_0 " + str(high_0))
-            print("Low_0 " + str(low_0))
-            print("High_1 " + str(high_1))
-            print("low_1 " + str(low_1))
+
             
             moist1 = ((adc_0 - low_0) / (high_0 - low_0)) * 100
             moist2 = ((adc_1 - low_1) / (high_1 - low_1))* 100
