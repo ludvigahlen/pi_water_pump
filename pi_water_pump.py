@@ -105,10 +105,10 @@ if __name__ == '__main__':
             if adc_1 > high_1:
              high_1 = adc_1            
 
-            print("High_0 " + high_0)
-            print("Low_0 " + low_0)
-            print("High_1 " + high_1)
-            print("low_1 " + low_1)
+            print("High_0 " + str(high_0))
+            print("Low_0 " + str(low_0))
+            print("High_1 " + str(high_1))
+            print("low_1 " + str(low_1))
             
             moist1 = ((adc_0 - low_0) / (high_0 - low_0)) * 100
             moist2 = ((adc_1 - low_1) / (high_1 - low_1))* 100
