@@ -89,7 +89,7 @@ if __name__ == '__main__':
         high_0 = 3
         low_0 = 2
         high_1 = 3
-        low_0 = 2
+        low_1 = 2
         while True:
             db = _mysql.connect(db_ip, db_username, db_password, db_database)
 
